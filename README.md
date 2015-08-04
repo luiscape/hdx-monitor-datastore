@@ -6,9 +6,9 @@ DataStore micro-service for the HDX Monitor application. This service is designe
 ### Creating DataStores
 By default, all datastores are created using an all-text schema. There are three API endpoints useful for making DataStores:
 
-* /datastore/show/[RESOURCE_ID]
-* /datastore/create/[RESOURCE_ID]
-* /datastore/delete/[RESOURCE_ID]
+* /show/[RESOURCE_ID]
+* /create/[RESOURCE_ID]
+* /delete/[RESOURCE_ID]
 
 The first will display metadata from the resource at hand. The second will create a DataStore. You should see a success (or failure) message when the process is complete.
 
