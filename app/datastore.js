@@ -261,7 +261,7 @@ module.exports = function (app) {
   //
   // ROUTES =============================================================
   //
-  app.get('/datastore', function (req, res) {
+  app.get('/', function (req, res) {
     var payload = {
       'online': true,
       'message': 'Service for creating datastores on a CKAN instance.',
@@ -279,7 +279,7 @@ module.exports = function (app) {
   })
 
   // Show a specific dataset.
-  app.get('/datastore/show/:resource_id', function (req, res) {
+  app.get('/show/:resource_id', function (req, res) {
     FetchDatasetInfo(function (err, data) {
       if (err) {
         res.send(err)
@@ -300,7 +300,7 @@ module.exports = function (app) {
     })
   })
 
-  app.get('/datastore/create/:resource_id', function (req, res) {
+  app.get('/create/:resource_id', function (req, res) {
     //
     // Checks if the DataStore is active.
     // If it is, delete the active DataStore
@@ -373,7 +373,7 @@ module.exports = function (app) {
   // to /datastore.
   //
   app.use(function (req, res, next) {
-    res.status(404).redirect('/datastore')
+    res.status(404).redirect('/')
   })
 
 }  // module.exports close.
