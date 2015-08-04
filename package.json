@@ -1,0 +1,38 @@
+{
+  "name": "hdx-monitor",
+  "version": "0.0.0",
+  "description": "Simple Node application to monitor datasets on HDX.",
+  "main": "server.js",
+  "scripts": {
+    "test": "make test",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luiscape/hdx-monitor"
+  },
+  "keywords": [
+    "hdx",
+    "monitor"
+  ],
+  "author": "Luis Capelo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/luiscape/hdx-monitor/issues"
+  },
+  "dependencies": {
+    "ckan": "~0.2.3",
+    "express": "~4.13.1",
+    "ejs": "~2.3.3",
+    "csv": "~0.4.5",
+    "follow-redirects": "0.0.6"
+  },
+  "devDependencies": {
+    "chai": "^2.2.0",
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.13",
+    "mocha": "^2.2.4",
+    "should": "^5.2.0",
+    "supertest": "^0.15.0"
+  }
+}

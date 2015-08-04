@@ -1,0 +1,24 @@
+sudo: required
+language: node_js
+node_js:
+  - "0.12"
+
+install:
+ - npm install
+ - npm install istanbul
+ - npm install -g standard
+ - npm install -g snazzy
+ - export COVERALLS_SERVICE_NAME=travis-ci
+
+# run tests + coverage
+script:
+  - make tests
+  # - make standard  # checks JS standard
+
+# send coverage report to coveralls.io
+after_success:
+  - make coveralls
+
+# email notifications
+notifications:
+    email: false
