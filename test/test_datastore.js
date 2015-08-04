@@ -3,15 +3,12 @@
 /                                        */
 
 /* Dependencies */
-
-var sys       = require('sys')
-var path      = require('path')
-var should    = require('should')
-var expect    = require('chai').expect
+var path = require('path')
+var expect = require('chai').expect
 var supertest = require('supertest')
 
 /* Application */
-// var
+// var Datastore = require('../app/datastore.js')
 
 /* Tests */
 

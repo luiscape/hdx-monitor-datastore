@@ -5,6 +5,7 @@
 /* Dependencies */
 var fs = require('fs')
 var path = require('path')
+var should = require('should')
 var expect = require('chai').expect
 
 /* Application */
@@ -28,7 +29,8 @@ describe('Configuration files.', function () {
 
   it('Configuration files should contain default data folder (and it should exist).', function (done) {
     var base_directories = fs.readdirSync(path.dirname(__dirname))
-    base_directories.should.containEql('data')
+    var base_name = path.basename(Dev.DataFolder)
+    base_directories.should.containEql(base_name)
     done()
   })
 
