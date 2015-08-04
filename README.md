@@ -14,19 +14,7 @@ The first will display metadata from the resource at hand. The second will creat
 
 
 ### Secrets
-Secrets are kept in the [`/config`](/config) directory. It should be a JavaScript file containing the following:
-
-```javascript
-// expose our config directly to our application using module.exports
-module.exports = {
-
-    'CkanInstance': 'https://data.hdx.rwlabs.org/',
-    'ApiKey': 'XXXXXXX'
-
-}
-```
-
-For now, that is how the API key is used to create datastores.
+Secrets are passed as environment variables. For now, a default API key is used to create DataStores. It can be set as `DEFAULT_API_KEY` when creating the Docker container.
 
 ### Coding Standard
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
