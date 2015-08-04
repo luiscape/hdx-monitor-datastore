@@ -1,7 +1,7 @@
 ## HDX Monitor Datastore
 DataStore micro-service for the HDX Monitor application. This service is designed to run as a `Docker` container. See the `Dockerfile` for instructions on how to run it.
 
-[![Build Status](https://travis-ci.org/luiscape/hdx-monitor.svg?branch=master)](https://travis-ci.org/luiscape/hdx-monitor) [![Coverage Status](https://coveralls.io/repos/luiscape/hdx-monitor/badge.svg?branch=master&service=github)](https://coveralls.io/github/luiscape/hdx-monitor?branch=master)
+[![Build Status](https://travis-ci.org/luiscape/hdx-monitor-datastore.svg)](https://travis-ci.org/luiscape/hdx-monitor-datastore)
 
 ### Creating DataStores
 By default, all datastores are created using an all-text schema. There are three API endpoints useful for making DataStores:
