@@ -15,4 +15,4 @@ RUN \
   npm install
 
 EXPOSE 5000
-CMD ["pm2", "start", "/hdx-monitor-datastore/server.js"]
+CMD ["pm2", "start", "/hdx-monitor-datastore/server.js", "--no-daemon"]
