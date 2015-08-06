@@ -263,6 +263,20 @@ module.exports = function (app) {
   //
 
   //
+  // Status endpoint.
+  //
+  app.get('/status', function (req, res) {
+    var payload = {
+      'online': true,
+      'message': 'Service for creating datastores on a CKAN instance.',
+      'CKAN_instance': Config.CkanInstance,
+      'version': Config.version,
+      'repository': Config.repository
+    }
+    res.send(payload)
+  })
+
+  //
   // Collect resource id from parameter.
   //
   app.param('resource_id', function (req, res, next, id) {
@@ -283,20 +297,6 @@ module.exports = function (app) {
 
   app.delete('/:resource_id', function (req, res) {
     res.redirect('/delete/' + resourceInfo.id)
-  })
-
-  //
-  // Status endpoint.
-  //
-  app.get('/status', function (req, res) {
-    var payload = {
-      'online': true,
-      'message': 'Service for creating datastores on a CKAN instance.',
-      'CKAN_instance': Config.CkanInstance,
-      'version': Config.version,
-      'repository': Config.repository
-    }
-    res.send(payload)
   })
 
   // Show a specific dataset.
