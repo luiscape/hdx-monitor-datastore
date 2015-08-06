@@ -22,9 +22,10 @@
   },
   "dependencies": {
     "ckan": "~0.2.3",
-    "express": "~4.13.1",
-    "ejs": "~2.3.3",
+    "cors": "^2.7.1",
     "csv": "~0.4.5",
+    "ejs": "~2.3.3",
+    "express": "~4.13.1",
     "follow-redirects": "0.0.6"
   },
   "devDependencies": {
