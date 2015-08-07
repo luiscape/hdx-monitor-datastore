@@ -17,7 +17,7 @@ module.exports = function (app) {
   // Example dataset.
   //
   var resourceInfo = {
-    'id': 'foo-bar',
+    'id': null,
     'schema': { 'fields': [] }
   }
 
@@ -280,6 +280,10 @@ module.exports = function (app) {
   // Collect resource id from parameter.
   //
   app.param('resource_id', function (req, res, next, id) {
+    if (typeof id === typeof undefined) {
+      var payload = { 'success': false, 'message': 'Please provide resource ID.' }
+      res.send(payload)
+    }
     resourceInfo.id = id
     next()
   })
