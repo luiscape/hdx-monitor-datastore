@@ -3,6 +3,6 @@ module.exports = {
   'DataFolder': './data/',
   'InferDataTypes': false,
   'ApiKey': process.env.DEFAULT_API_KEY,
-  'version': 'v.0.1.0',
+  'version': 'v.0.1.1',
   'repository': 'https://github.com/luiscape/hdx-monitor-datastore'
 }
