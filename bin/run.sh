@@ -3,7 +3,7 @@
 #
 # Export environment variables.
 #
-export DEFAULT_API_KEY=foo
+export DEFAULT_API_KEY=xxx
 
 #
 # Running the Node.js server.
