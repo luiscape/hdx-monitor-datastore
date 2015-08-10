@@ -291,15 +291,15 @@ module.exports = function (app) {
   //
   // REST endpoints.
   //
-  app.get('/:resource_id', function (req, res) {
+  app.get('/rest/:resource_id', function (req, res) {
     res.redirect('/show/' + resourceInfo.id)
   })
 
-  app.post('/:resource_id', function (req, res) {
+  app.post('/rest/:resource_id', function (req, res) {
     res.redirect('/create/' + resourceInfo.id)
   })
 
-  app.delete('/:resource_id', function (req, res) {
+  app.delete('/rest/:resource_id', function (req, res) {
     res.redirect('/delete/' + resourceInfo.id)
   })
 
