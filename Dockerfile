@@ -18,5 +18,8 @@ RUN \
 RUN \
   cd hdx-monitor-datastore && make setup
 
+WORKDIR "/hdx-monitor-datastore"
+
 EXPOSE 5000
-CMD ["pm2", "start", "/hdx-monitor-datastore/server.js", "--no-daemon"]
+
+CMD ["pm2", "start", "server.js", "--no-daemon"]
