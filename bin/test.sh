@@ -14,4 +14,4 @@ istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec
 #
 # Cleaning up.
 #
-rm -rf coverage/
+# rm -rf coverage/
