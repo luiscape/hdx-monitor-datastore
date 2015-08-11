@@ -35,7 +35,7 @@ module.exports = function (app) {
         var resource_data = out.result
         callback(null, resource_data)
       } else {
-        var payload = { 'success': false, 'message': 'Failed to fetch resource information.', 'error': err}
+        var payload = { 'success': false, 'message': 'Failed to fetch resource information.', 'error': err }
         callback(payload)
       }
     })
@@ -58,7 +58,7 @@ module.exports = function (app) {
         })
       }
     } else {
-      var payload = {'success': true, 'message': 'Redirect successful.', 'url': response.headers.location}
+      var payload = { 'success': true, 'message': 'Redirect successful.', 'url': response.headers.location }
       callback(null, false, payload)
     }
 
@@ -111,13 +111,13 @@ module.exports = function (app) {
       if (response.statusCode === 200) {
         response.pipe(file)
         response.on('end', function () {
-          payload = {'success': true, 'message': 'File downloaded successfully.', 'file_name': 'data/' + file_id + '.csv' }
+          payload = { 'success': true, 'message': 'File downloaded successfully.', 'file_name': 'data/' + file_id + '.csv' }
           file.on('finish', function () {
             file.close(callback(null, payload))
           })
         })
       } else {
-        var payload = {'success': false, 'message': 'Failed to download file.', 'http_status_code': response.statusCode }
+        var payload = { 'success': false, 'message': 'Failed to download file.', 'http_status_code': response.statusCode }
         callback(payload)
       }
     })
@@ -228,7 +228,7 @@ module.exports = function (app) {
   function DeleteFile (file_path, verbose, callback) {
     fs.unlink(file_path, function (err) {
       if (err) {
-        callback({ 'success': false, 'message': 'Failed to delete file.', 'error': err})
+        callback({ 'success': false, 'message': 'Failed to delete file.', 'error': err })
       } else {
         if (verbose) {
           console.log('File ' + file_path + ' deleted successfully.')
@@ -401,4 +401,4 @@ module.exports = function (app) {
     res.status(404).redirect('/')
   })
 
-}  // module.exports close.
+}  // module.exports closes.
