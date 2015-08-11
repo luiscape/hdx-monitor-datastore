@@ -398,7 +398,7 @@ module.exports = function (app) {
   // to /datastore.
   //
   app.use(function (req, res, next) {
-    res.status(404).redirect('/')
+    res.status(404).redirect('/status')
   })
 
 }  // module.exports closes.
