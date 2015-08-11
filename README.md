@@ -12,6 +12,13 @@ By default, all datastores are created using an all-text schema. There are three
 
 The first will display metadata from the resource at hand. The second will create a DataStore. You should see a success (or failure) message when the process is complete.
 
+REST endpoints are also available on:
+
+* /rest/
+ * **GET**: shows a resource.
+ * **POST**: creates a datastore.
+ * **DELETE**: deletes a datastore.
+
 
 ### Secrets
 Secrets are passed as environment variables. For now, a default API key is used to create DataStores. It can be set as `DEFAULT_API_KEY` when creating the Docker container.
