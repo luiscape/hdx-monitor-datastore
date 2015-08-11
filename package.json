@@ -26,7 +26,8 @@
     "csv": "~0.4.5",
     "ejs": "~2.3.3",
     "express": "~4.13.1",
-    "follow-redirects": "0.0.6"
+    "follow-redirects": "0.0.6",
+    "mkdirp": "^0.5.1"
   },
   "devDependencies": {
     "chai": "^2.2.0",
