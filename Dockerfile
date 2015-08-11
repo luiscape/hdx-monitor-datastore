@@ -14,5 +14,9 @@ RUN \
   cd hdx-monitor-datastore && \
   npm install
 
+# Running setup script.
+RUN \
+  cd hdx-monitor-datastore && make setup
+
 EXPOSE 5000
 CMD ["pm2", "start", "/hdx-monitor-datastore/server.js", "--no-daemon"]
