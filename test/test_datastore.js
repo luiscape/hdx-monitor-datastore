@@ -8,16 +8,16 @@ var expect = require('chai').expect
 var supertest = require('supertest')
 
 /* Application */
-// var Datastore = require('../app/datastore.js')
+var Config = require('../config/dev')
+var Datastore = require('../app/datastore.js')
 
 /* Tests */
 
-// describe('Testing DataStore application.', function () {
+describe('DataStore core service scripts.', function () {
 
-//   it('configuration file type', function (done) {
-//     configuration = C.LoadConfig('dev')
-//     expect(typeof(configuration)).to.equal('object')
-//     done()
-//   })
+  it('Configuration file type should be an object.', function (done) {
+    expect(typeof Config).to.equal('object')
+    done()
+  })
 
-// })
+})
