@@ -1,6 +1,11 @@
 #!/bin/bash
 
 #
+# Start server.
+#
+pm2 start server.js
+
+#
 # Run tests with istanbul and report coverage.
 #
 # istanbul cover _mocha -- -R spec
@@ -12,6 +17,6 @@ istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec
 # open coverage/lcov-report/index.html
 
 #
-# Cleaning up.
+# Stop and delete server.
 #
-# rm -rf coverage/
+pm2 stop server && pm2 delete server
