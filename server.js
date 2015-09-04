@@ -3,6 +3,9 @@ var cors = require('cors')
 var app = express()
 var port = process.env.PORT || 5000
 
+//
+// App variables.
+//
 var _version = 'v.0.1.4'
 
 //
