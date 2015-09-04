@@ -8,6 +8,7 @@ install:
  - npm install istanbul
  - npm install -g standard
  - npm install -g snazzy
+ - npm install -g pm2
  - export COVERALLS_SERVICE_NAME=travis-ci
 
 # run tests + coverage
