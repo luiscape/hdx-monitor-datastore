@@ -66,7 +66,7 @@ describe('Application routes.', function () {
       })
   })
 
-  it('POST [/rest/ID] shoud get a 200 redirect HTTP status code.', function (done) {
+  it('POST [/rest/ID] shoud get a 200 HTTP status code.', function (done) {
     application
       .post('/rest/foo-bar-test')
       .end(function (err, res) {
@@ -75,7 +75,7 @@ describe('Application routes.', function () {
       })
   })
 
-  it('DELETE [/rest/ID] shoud get a 200 redirect HTTP status code.', function (done) {
+  it('DELETE [/rest/ID] shoud get a 200 HTTP status code.', function (done) {
     application
       .delete('/rest/foo-bar-test')
       .end(function (err, res) {
@@ -84,11 +84,13 @@ describe('Application routes.', function () {
       })
   })
 
-  it('GET [/show/ID]  with an id should return a complete object.', function (done) {
+  it('GET [/show/ID] with an id should return a complete object.', function (done) {
     application
-      .get('/show/test-foo-bar')
+      .get('/show/3773b2f4-dba6-43d0-9262-3a3dbc3cec96')
       .end(function (err, res) {
         expect(res.body).to.have.a.property('success')
+        expect(res.body).to.have.a.property('message')
+        expect(typeof res.body.success).to.equal(typeof true)
         done()
       })
   })
