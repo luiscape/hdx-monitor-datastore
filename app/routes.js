@@ -7,11 +7,12 @@ var Datastore = require('./datastore')
 
 module.exports = function (app) {
   //
-  // Example dataset.
+  // Global variable of dataset.
   //
   var resourceInfo = {
-    'id': null,
-    'schema': { 'fields': [] }
+    'schema': {
+      'fields': []
+    }
   }
 
   //
@@ -48,7 +49,7 @@ module.exports = function (app) {
       var payload = { 'success': false, 'message': 'Please provide resource ID.' }
       res.send(payload)
     }
-    resourceInfo.id = id
+    resourceInfo['id'] = id
     next()
   })
 
@@ -69,7 +70,7 @@ module.exports = function (app) {
 
   // Show a specific dataset.
   app.get('/show/:resource_id', function (req, res) {
-    Datastore.FetchDatasetInfo(function (err, data) {
+    Datastore.FetchDatasetInfo(resourceInfo, function (err, data) {
       if (err) {
         res.send(err)
       } else {
@@ -80,7 +81,7 @@ module.exports = function (app) {
 
   // Endpoint for deleting DataStores.
   app.get('/delete/:resource_id', function (req, res) {
-    Datastore.DeleteDataStore(null, false, function (err, data) {
+    Datastore.DeleteDataStore(null, false, resourceInfo, function (err, data) {
       if (err) {
         res.send(err)
       } else {
@@ -96,12 +97,12 @@ module.exports = function (app) {
     // infer types, and re-create it with
     // new data.
     //
-    Datastore.FetchDatasetInfo(function (err, data) {
+    Datastore.FetchDatasetInfo(resourceInfo, function (err, data) {
       if (err) {
         res.send(err)
       } else {
         if (data.datastore_active) {
-          Datastore.DeleteDataStore(data, false, function (err, data) {
+          Datastore.DeleteDataStore(data, false, resourceInfo, function (err, data) {
             if (err) {
               res.send(err)
             } else {
@@ -109,11 +110,11 @@ module.exports = function (app) {
                 if (err) {
                   res.send(err)
                 } else {
-                  Datastore.InferDataTypes(data.file_name, Config.InferDataTypes, function (err, data) {
+                  Datastore.InferDataTypes(data.file_name, Config.InferDataTypes, resourceInfo, function (err, data) {
                     if (err) {
                       res.send(err)
                     } else {
-                      Datastore.CreateDataStore(data.file_name, function (err, data) {
+                      Datastore.CreateDataStore(data.file_name, resourceInfo, function (err, data) {
                         if (err) {
                           res.send(err)
                         } else {
@@ -137,11 +138,11 @@ module.exports = function (app) {
             if (err) {
               res.send(err)
             } else {
-              Datastore.InferDataTypes(data.file_name, Config.InferDataTypes, function (err, data) {
+              Datastore.InferDataTypes(data.file_name, Config.InferDataTypes, resourceInfo, function (err, data) {
                 if (err) {
                   res.send(err)
                 } else {
-                  Datastore.CreateDataStore(data.file_name, function (err, data) {
+                  Datastore.CreateDataStore(data.file_name, resourceInfo, function (err, data) {
                     if (err) {
                       res.send(err)
                     } else {

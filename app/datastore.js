@@ -13,18 +13,10 @@ var https = require('follow-redirects').https
 var client = new ckan.Client(Config.CkanInstance, Config.ApiKey)
 
 //
-// In-memory dataset.
-//
-var resourceInfo = {
-  'id': null,
-  'schema': { 'fields': [] }
-}
-
-//
 // Fetch the metadata from a resource.
 //
-var FetchDatasetInfo = function (callback) {
-  client.action('resource_show', { id: resourceInfo.id }, function (err, out) {
+var FetchDatasetInfo = function (resource, callback) {
+  client.action('resource_show', { id: resource.id }, function (err, out) {
     if (!err) {
       var resource_data = out.result
       callback(null, resource_data)
@@ -81,10 +73,10 @@ var DownloadFile = function (resource_data, verbose, callback) {
   //
   var options = {
     host: url.parse(resource_data.url).hostname,
-    path: url.parse(resource_data.url).pathname,
+    path: url.parse(resource_data.url).path,
     headers: { 'X-CKAN-API-Key': Config.ApiKey }
   }
-  var request = http.get(options, function (response) {
+  var request = https.get(options, function (response) {
     if (verbose) {
       console.log('Request headers: ' + JSON.stringify(options))
     }
@@ -130,7 +122,7 @@ var DownloadFile = function (resource_data, verbose, callback) {
 // Inferring data types from
 // CSV input.
 //
-var InferDataTypes = function (file_path, all_text, callback) {
+var InferDataTypes = function (file_path, all_text, resource, callback) {
   //
   // Hack to account for missing parameter.
   //
@@ -151,14 +143,14 @@ var InferDataTypes = function (file_path, all_text, callback) {
       var keys = Object.keys(data[0])
       if (all_text) {
         for (var i = 0; i < keys.length; i++) {
-          resourceInfo['schema']['fields'].push({ 'id': keys[i], 'type': 'text' })
+          resource['schema']['fields'].push({ 'id': keys[i], 'type': 'text' })
         }
       }
 
       //
       // Send success and close file.
       //
-      var payload = { 'success': true, 'message': 'Data types inferred successfully.', 'file_name': file_path, 'keys': resourceInfo }
+      var payload = { 'success': true, 'message': 'Data types inferred successfully.', 'file_name': file_path, 'keys': resource }
       file.close(callback(null, payload))
     })
   })
@@ -173,7 +165,7 @@ var InferDataTypes = function (file_path, all_text, callback) {
 //
 // Creates DataStore on a CKAN instance.
 //
-var CreateDataStore = function (file_path, callback) {
+var CreateDataStore = function (file_path, resource, callback) {
   var file = fs.createReadStream(file_path)
   var parser = csv.parse({ columns: true }, function (err, data) {
     if (err) {
@@ -186,16 +178,16 @@ var CreateDataStore = function (file_path, callback) {
       file.close(
         client.action('datastore_create',
           {
-            resource_id: resourceInfo.id,
+            resource_id: resource.id,
             records: data,
             force: true,
-            fields: resourceInfo['schema']['fields']
+            fields: resource['schema']['fields']
           },
           function (err) {
             if (err) {
               callback({ 'success': false, 'message': 'There was an error creating the DataStore.', 'error': err })
             } else {
-              var payload = Config.CkanInstance + 'api/action/datastore_search?resource_id=' + resourceInfo.id + '&amp;limit=5'
+              var payload = Config.CkanInstance + 'api/action/datastore_search?resource_id=' + resource.id + '&amp;limit=5'
               callback(null, { 'success': true, 'message': 'Created the DataStore successfully.', 'URL': payload })
             }
           })
@@ -235,19 +227,19 @@ var DeleteFile = function (file_path, verbose, callback) {
 // Deletes DataStore.
 // Useful for cleaning before creating.
 //
-var DeleteDataStore = function (data, verbose, callback) {
+var DeleteDataStore = function (data, verbose, resource, callback) {
   if (verbose) {
     console.log('Deleting datastore.')
   }
 
   client.action('datastore_delete', {
-    resource_id: resourceInfo.id,
+    resource_id: resource.id,
     force: true
   }, function (err) {
     if (err) {
       callback({ 'success': false, 'message': 'Could not delete old DataStore.', 'error': err })
     } else {
-      callback(null, { 'success': true, 'message': 'DataStore deleted successfully DataStore.', 'url': '/show/' + resourceInfo.id })
+      callback(null, { 'success': true, 'message': 'DataStore deleted successfully DataStore.', 'url': '/show/' + resource.id })
     }
   })
 }

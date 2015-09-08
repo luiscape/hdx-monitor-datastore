@@ -88,9 +88,8 @@ describe('Application routes.', function () {
     application
       .get('/show/3773b2f4-dba6-43d0-9262-3a3dbc3cec96')
       .end(function (err, res) {
-        expect(res.body).to.have.a.property('success')
-        expect(res.body).to.have.a.property('message')
-        expect(typeof res.body.success).to.equal(typeof true)
+        expect(res.body).to.have.a.property('id')
+        expect(res.body).to.have.a.property('description')
         done()
       })
   })
