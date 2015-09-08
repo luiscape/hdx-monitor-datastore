@@ -36,48 +36,48 @@ describe('DataStore core service scripts.', function () {
     done()
   })
 
-  it('ProcessResponse() should return an object', function (done) {
-    var url = 'http://www.google.com'
-    EvaluateCallback = function (err, logical, payload) {
-      var result
-      if (err) {
-        result = err
-      } else {
-        result = payload
-      }
-      expect(typeof result).to.equal(typeof {})
-      expect(typeof logical).to.equal(typeof true)
-    }
-    http.get(url, function (response) {
-      var body = ''
-      response.on('data', function (chunk) {
-        body += chunk
-      })
-      response.on('end', function () {
-        Datastore.ProcessResponse(response, EvaluateCallback)
-        done()
-      })
-    })
-  })
+  // it('ProcessResponse() should return an object', function (done) {
+  //   var url = 'http://www.google.com'
+  //   EvaluateCallback = function (err, logical, payload) {
+  //     var result
+  //     if (err) {
+  //       result = err
+  //     } else {
+  //       result = payload
+  //     }
+  //     expect(typeof result).to.equal(typeof {})
+  //     expect(typeof logical).to.equal(typeof true)
+  //   }
+  //   http.get(url, function (response) {
+  //     var body = ''
+  //     response.on('data', function (chunk) {
+  //       body += chunk
+  //     })
+  //     response.on('end', function () {
+  //       Datastore.ProcessResponse(response, EvaluateCallback)
+  //       done()
+  //     })
+  //   })
+  // })
 
-  it('DownloadFile() should return an object', function (done) {
-    Datastore.ProcessResponse(EvaluateObjectCallbacks)
-    done()
-  })
+  // it('DownloadFile() should return an object', function (done) {
+  //   Datastore.ProcessResponse(EvaluateObjectCallbacks)
+  //   done()
+  // })
 
-  it('InferDataTypes() should return an object', function (done) {
-    Datastore.ProcessResponse(EvaluateObjectCallbacks)
-    done()
-  })
+  // it('InferDataTypes() should return an object', function (done) {
+  //   Datastore.ProcessResponse(EvaluateObjectCallbacks)
+  //   done()
+  // })
 
-  it('DeleteFile() should return an object', function (done) {
-    Datastore.ProcessResponse(EvaluateObjectCallbacks)
-    done()
-  })
+  // it('DeleteFile() should return an object', function (done) {
+  //   Datastore.ProcessResponse(EvaluateObjectCallbacks)
+  //   done()
+  // })
 
-  it('DeleteDataStore() should return an object', function (done) {
-    Datastore.ProcessResponse(EvaluateObjectCallbacks)
-    done()
-  })
+  // it('DeleteDataStore() should return an object', function (done) {
+  //   Datastore.ProcessResponse(EvaluateObjectCallbacks)
+  //   done()
+  // })
 
 })
