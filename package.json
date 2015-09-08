@@ -21,6 +21,7 @@
     "url": "https://github.com/luiscape/hdx-monitor/issues"
   },
   "dependencies": {
+    "babyparse": "^0.4.3",
     "chai-http": "^1.0.0",
     "ckan": "~0.2.3",
     "cors": "^2.7.1",
