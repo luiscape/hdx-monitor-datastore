@@ -112,6 +112,21 @@ describe('Application routes.', function () {
       })
   })
 
+  it('GET [/create/ID] with a request body should return a complete object.', function (done) {
+    application
+      .get('/create/3773b2f4-dba6-43d0-9262-3a3dbc3cec96')
+      .send({
+        id: ['foo', 'bar', 'baz'],
+        type: ['text', 'text', 'text']
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(200)
+        expect(res.body).to.have.a.property('success')
+        expect(res.body).to.have.a.property('message')
+        done()
+      })
+  })
+
   it('GET [/404] should return a 404 status code.', function (done) {
     application
       .get('/foo/404')

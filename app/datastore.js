@@ -118,6 +118,45 @@ var DownloadFile = function (resource_data, verbose, callback) {
 
 }
 
+var AssignSchema = function (file_path, request_data, resource, callback) {
+  console.log('Assigning schema from request body:' + JSON.stringify(request_data))
+  if (request_data === null) {
+    var payload = {
+      'success': false,
+      'message': 'No schema data provided in the request.'
+    }
+    callback(payload)
+  }
+  if (typeof request_data !== typeof {}) {
+    var payload = {
+      'success': false,
+      'message': 'Request data does not seem to be an object.'
+    }
+    callback(payload)
+  }
+  if (request_data.type === null || request_data.id === null) {
+    var payload = {
+      'success': false,
+      'message': 'Request data does not seem to contain the fields `type` and `id`.'
+    }
+    callback(payload)
+  } else {
+
+    //
+    // Add keys to resouce variable.
+    //
+    for (i = 0; i < request_data.id.length; i++)  {
+      resource['schema']['fields'].push({ 'id': request_data.id[i], 'type': request_data.type[i] })
+    }
+
+    //
+    // Send success.
+    //
+    var payload = { 'success': true, 'message': 'Data types assigned successfully..', 'file_name': file_path, 'keys': resource }
+    callback(null, payload)
+  }
+}
+
 //
 // Inferring data types from
 // CSV input.
@@ -185,7 +224,14 @@ var CreateDataStore = function (file_path, resource, callback) {
           },
           function (err) {
             if (err) {
-              callback({ 'success': false, 'message': 'There was an error creating the DataStore.', 'error': err })
+              callback({ 
+                'success': false, 
+                'message': 'There was an error creating the DataStore.', 
+                'error': {
+                  'message': err.split(" Message: ")[0],
+                  'output': JSON.parse(err.split(" Message: ")[1])
+                  }
+                })
             } else {
               var payload = Config.CkanInstance + 'api/action/datastore_search?resource_id=' + resource.id + '&amp;limit=5'
               callback(null, { 'success': true, 'message': 'Created the DataStore successfully.', 'URL': payload })
@@ -251,6 +297,7 @@ module.exports = {
   FetchDatasetInfo: FetchDatasetInfo,
   ProcessResponse: ProcessResponse,
   DownloadFile: DownloadFile,
+  AssignSchema: AssignSchema,
   InferDataTypes: InferDataTypes,
   CreateDataStore: CreateDataStore,
   DeleteFile: DeleteFile,

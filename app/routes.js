@@ -91,6 +91,12 @@ module.exports = function (app) {
   })
 
   app.get('/create/:resource_id', function (req, res) {
+
+    //
+    // Cleaning object from memory.
+    //
+    resourceInfo.schema.fields = []
+
     //
     // Checks if the DataStore is active.
     // If it is, delete the active DataStore
@@ -110,47 +116,106 @@ module.exports = function (app) {
                 if (err) {
                   res.send(err)
                 } else {
-                  Datastore.InferDataTypes(data.file_name, Config.InferDataTypes, resourceInfo, function (err, data) {
-                    if (err) {
-                      res.send(err)
-                    } else {
-                      Datastore.CreateDataStore(data.file_name, resourceInfo, function (err, data) {
-                        if (err) {
-                          res.send(err)
-                        } else {
-                          res.send(data)
-                        }
-                      })
-                    }
-                  })
+
+                  //
+                  // If user sends a request body,
+                  // assign that body as a schema.
+                  //
+                  if (req.body) {
+                    console.log(req.body)
+                    Datastore.AssignSchema(data.file_name, req.body, resourceInfo, function (err, data) {
+                      if (err) {
+                        res.send(err)
+                      } else {
+                        console.log('Loading data from: ' + data.file_name)
+                        Datastore.CreateDataStore(data.file_name, resourceInfo, function (err, data) {
+                          if (err) {
+                            res.send(err)
+                          } else {
+                            res.send(data)
+                          }
+                        })
+                      }
+                    })
+                   
+
+                  //
+                  // If it doesn't, infer the
+                  // schema based on the CSV file.
+                  // 
+                  } else {
+                  
+                    Datastore.InferDataTypes(data.file_name, Config.InferDataTypes, resourceInfo, function (err, data) {
+                      if (err) {
+                        res.send(err)
+                      } else {
+                        Datastore.CreateDataStore(data.file_name, resourceInfo, function (err, data) {
+                          if (err) {
+                            res.send(err)
+                          } else {
+                            res.send(data)
+                          }
+                        })
+                      }
+                    })
+                  }
                 }
               })
             }
           })
-
-        //
-        // If DataStore doesn't exist it
-        // downloads file, infers data types,
-        // and creates DataStore.
-        //
-        } else {
+         } else {
+          
+          //
+          // If DataStore doesn't exist it
+          // downloads file, possibly infers data types,
+          // and creates DataStore.
+          //
           Datastore.DownloadFile(data, false, function (err, data) {
             if (err) {
               res.send(err)
             } else {
-              Datastore.InferDataTypes(data.file_name, Config.InferDataTypes, resourceInfo, function (err, data) {
-                if (err) {
-                  res.send(err)
-                } else {
-                  Datastore.CreateDataStore(data.file_name, resourceInfo, function (err, data) {
-                    if (err) {
-                      res.send(err)
-                    } else {
-                      res.send(data)
-                    }
-                  })
-                }
-              })
+
+              //
+              // If user sends a request body,
+              // assign that body as a schema.
+              //
+              if (req.body) {
+                Datastore.AssignSchema(data.file_name, req.body, resourceInfo, function (err, data) {
+                  if (err) {
+                    res.send(err)
+                  } else {
+                    console.log('Loading data from: ' + data.file_name)
+                    Datastore.CreateDataStore(data.file_name, resourceInfo, function (err, data) {
+                      if (err) {
+                        res.send(err)
+                      } else {
+                        res.send(data)
+                      }
+                    })
+                  }
+                })
+               
+
+              //
+              // If it doesn't, infer the
+              // schema based on the CSV file.
+              // 
+              } else {
+              
+                Datastore.InferDataTypes(data.file_name, Config.InferDataTypes, resourceInfo, function (err, data) {
+                  if (err) {
+                    res.send(err)
+                  } else {
+                    Datastore.CreateDataStore(data.file_name, resourceInfo, function (err, data) {
+                      if (err) {
+                        res.send(err)
+                      } else {
+                        res.send(data)
+                      }
+                    })
+                  }
+                })
+              }
             }
           })
         }
