@@ -13,18 +13,10 @@ var https = require('follow-redirects').https
 var client = new ckan.Client(Config.CkanInstance, Config.ApiKey)
 
 //
-// In-memory dataset.
-//
-var resourceInfo = {
-  'id': null,
-  'schema': { 'fields': [] }
-}
-
-//
 // Fetch the metadata from a resource.
 //
-var FetchDatasetInfo = function (callback) {
-  client.action('resource_show', { id: resourceInfo.id }, function (err, out) {
+var FetchDatasetInfo = function (resource, callback) {
+  client.action('resource_show', { id: resource.id }, function (err, out) {
     if (!err) {
       var resource_data = out.result
       callback(null, resource_data)
@@ -81,10 +73,10 @@ var DownloadFile = function (resource_data, verbose, callback) {
   //
   var options = {
     host: url.parse(resource_data.url).hostname,
-    path: url.parse(resource_data.url).pathname,
+    path: url.parse(resource_data.url).path,
     headers: { 'X-CKAN-API-Key': Config.ApiKey }
   }
-  var request = http.get(options, function (response) {
+  var request = https.get(options, function (response) {
     if (verbose) {
       console.log('Request headers: ' + JSON.stringify(options))
     }
@@ -126,11 +118,50 @@ var DownloadFile = function (resource_data, verbose, callback) {
 
 }
 
+var AssignSchema = function (file_path, request_data, resource, callback) {
+  console.log('Assigning schema from request body:' + JSON.stringify(request_data))
+  if (request_data === null) {
+    var payload = {
+      'success': false,
+      'message': 'No schema data provided in the request.'
+    }
+    callback(payload)
+  }
+  if (typeof request_data !== typeof {}) {
+    var payload = {
+      'success': false,
+      'message': 'Request data does not seem to be an object.'
+    }
+    callback(payload)
+  }
+  if (request_data.type === null || request_data.id === null) {
+    var payload = {
+      'success': false,
+      'message': 'Request data does not seem to contain the fields `type` and `id`.'
+    }
+    callback(payload)
+  } else {
+
+    //
+    // Add keys to resouce variable.
+    //
+    for (i = 0; i < request_data.id.length; i++)  {
+      resource['schema']['fields'].push({ 'id': request_data.id[i], 'type': request_data.type[i] })
+    }
+
+    //
+    // Send success.
+    //
+    var payload = { 'success': true, 'message': 'Data types assigned successfully..', 'file_name': file_path, 'keys': resource }
+    callback(null, payload)
+  }
+}
+
 //
 // Inferring data types from
 // CSV input.
 //
-var InferDataTypes = function (file_path, all_text, callback) {
+var InferDataTypes = function (file_path, all_text, resource, callback) {
   //
   // Hack to account for missing parameter.
   //
@@ -151,14 +182,14 @@ var InferDataTypes = function (file_path, all_text, callback) {
       var keys = Object.keys(data[0])
       if (all_text) {
         for (var i = 0; i < keys.length; i++) {
-          resourceInfo['schema']['fields'].push({ 'id': keys[i], 'type': 'text' })
+          resource['schema']['fields'].push({ 'id': keys[i], 'type': 'text' })
         }
       }
 
       //
       // Send success and close file.
       //
-      var payload = { 'success': true, 'message': 'Data types inferred successfully.', 'file_name': file_path, 'keys': resourceInfo }
+      var payload = { 'success': true, 'message': 'Data types inferred successfully.', 'file_name': file_path, 'keys': resource }
       file.close(callback(null, payload))
     })
   })
@@ -173,7 +204,7 @@ var InferDataTypes = function (file_path, all_text, callback) {
 //
 // Creates DataStore on a CKAN instance.
 //
-var CreateDataStore = function (file_path, callback) {
+var CreateDataStore = function (file_path, resource, callback) {
   var file = fs.createReadStream(file_path)
   var parser = csv.parse({ columns: true }, function (err, data) {
     if (err) {
@@ -186,16 +217,23 @@ var CreateDataStore = function (file_path, callback) {
       file.close(
         client.action('datastore_create',
           {
-            resource_id: resourceInfo.id,
+            resource_id: resource.id,
             records: data,
             force: true,
-            fields: resourceInfo['schema']['fields']
+            fields: resource['schema']['fields']
           },
           function (err) {
             if (err) {
-              callback({ 'success': false, 'message': 'There was an error creating the DataStore.', 'error': err })
+              callback({ 
+                'success': false, 
+                'message': 'There was an error creating the DataStore.', 
+                'error': {
+                  'message': err.split(" Message: ")[0],
+                  'output': JSON.parse(err.split(" Message: ")[1])
+                  }
+                })
             } else {
-              var payload = Config.CkanInstance + 'api/action/datastore_search?resource_id=' + resourceInfo.id + '&amp;limit=5'
+              var payload = Config.CkanInstance + 'api/action/datastore_search?resource_id=' + resource.id + '&amp;limit=5'
               callback(null, { 'success': true, 'message': 'Created the DataStore successfully.', 'URL': payload })
             }
           })
@@ -235,19 +273,19 @@ var DeleteFile = function (file_path, verbose, callback) {
 // Deletes DataStore.
 // Useful for cleaning before creating.
 //
-var DeleteDataStore = function (data, verbose, callback) {
+var DeleteDataStore = function (data, verbose, resource, callback) {
   if (verbose) {
     console.log('Deleting datastore.')
   }
 
   client.action('datastore_delete', {
-    resource_id: resourceInfo.id,
+    resource_id: resource.id,
     force: true
   }, function (err) {
     if (err) {
       callback({ 'success': false, 'message': 'Could not delete old DataStore.', 'error': err })
     } else {
-      callback(null, { 'success': true, 'message': 'DataStore deleted successfully DataStore.', 'url': '/show/' + resourceInfo.id })
+      callback(null, { 'success': true, 'message': 'DataStore deleted successfully DataStore.', 'url': '/show/' + resource.id })
     }
   })
 }
@@ -259,6 +297,7 @@ module.exports = {
   FetchDatasetInfo: FetchDatasetInfo,
   ProcessResponse: ProcessResponse,
   DownloadFile: DownloadFile,
+  AssignSchema: AssignSchema,
   InferDataTypes: InferDataTypes,
   CreateDataStore: CreateDataStore,
   DeleteFile: DeleteFile,
