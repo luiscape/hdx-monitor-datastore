@@ -90,12 +90,12 @@ module.exports = function (app) {
     })
   })
 
-  app.get('/create/:resource_id', function (req, res) {
-
+  app.all('/create/:resource_id', function (req, res) {
     //
     // Cleaning object from memory.
     //
     resourceInfo.schema.fields = []
+    console.log('Getting hit with schema: ' + JSON.stringify(req.body))
 
     //
     // Checks if the DataStore is active.
@@ -116,13 +116,11 @@ module.exports = function (app) {
                 if (err) {
                   res.send(err)
                 } else {
-
                   //
                   // If user sends a request body,
                   // assign that body as a schema.
                   //
-                  if (req.body) {
-                    console.log(req.body)
+                  if (req.body.id !== undefined) {
                     Datastore.AssignSchema(data.file_name, req.body, resourceInfo, function (err, data) {
                       if (err) {
                         res.send(err)
@@ -137,14 +135,12 @@ module.exports = function (app) {
                         })
                       }
                     })
-                   
 
                   //
                   // If it doesn't, infer the
                   // schema based on the CSV file.
-                  // 
+                  //
                   } else {
-                  
                     Datastore.InferDataTypes(data.file_name, Config.InferDataTypes, resourceInfo, function (err, data) {
                       if (err) {
                         res.send(err)
@@ -163,8 +159,7 @@ module.exports = function (app) {
               })
             }
           })
-         } else {
-          
+        } else {
           //
           // If DataStore doesn't exist it
           // downloads file, possibly infers data types,
@@ -174,12 +169,11 @@ module.exports = function (app) {
             if (err) {
               res.send(err)
             } else {
-
               //
               // If user sends a request body,
               // assign that body as a schema.
               //
-              if (req.body) {
+              if (req.body.id !== undefined) {
                 Datastore.AssignSchema(data.file_name, req.body, resourceInfo, function (err, data) {
                   if (err) {
                     res.send(err)
@@ -194,14 +188,12 @@ module.exports = function (app) {
                     })
                   }
                 })
-               
 
               //
               // If it doesn't, infer the
               // schema based on the CSV file.
-              // 
+              //
               } else {
-              
                 Datastore.InferDataTypes(data.file_name, Config.InferDataTypes, resourceInfo, function (err, data) {
                   if (err) {
                     res.send(err)
