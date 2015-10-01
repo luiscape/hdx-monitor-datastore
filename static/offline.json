@@ -1,7 +1,0 @@
-{
-    "online": false,
-    "message": "Service for creating datastores on a CKAN instance.",
-    "CKAN_instance": "https://data.hdx.rwlabs.org/",
-    "version": "v.0.1.3",
-    "repository": "https://github.com/luiscape/hdx-monitor-datastore"
-}

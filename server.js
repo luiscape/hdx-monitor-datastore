@@ -6,7 +6,6 @@ var bodyParser = require('body-parser')
 //
 // App variables.
 //
-var _version = 'v.0.1.4'
 var port = process.env.PORT || 5000
 
 //
