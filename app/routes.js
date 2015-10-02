@@ -95,7 +95,7 @@ module.exports = function (app) {
     // Cleaning object from memory.
     //
     resourceInfo.schema.fields = []
-    console.log('Getting hit with schema: ' + JSON.stringify(req.body))
+    console.log('Getting hit with schema: ' + JSON.stringify(req.query))
 
     //
     // Checks if the DataStore is active.
@@ -120,8 +120,8 @@ module.exports = function (app) {
                   // If user sends a request body,
                   // assign that body as a schema.
                   //
-                  if (req.body.id !== undefined) {
-                    Datastore.AssignSchema(data.file_name, req.body, resourceInfo, function (err, data) {
+                  if (req.query.id !== undefined) {
+                    Datastore.AssignSchema(data.file_name, req.query, resourceInfo, function (err, data) {
                       if (err) {
                         res.send(err)
                       } else {
@@ -173,8 +173,8 @@ module.exports = function (app) {
               // If user sends a request body,
               // assign that body as a schema.
               //
-              if (req.body.id !== undefined) {
-                Datastore.AssignSchema(data.file_name, req.body, resourceInfo, function (err, data) {
+              if (req.query.id !== undefined) {
+                Datastore.AssignSchema(data.file_name, req.query, resourceInfo, function (err, data) {
                   if (err) {
                     res.send(err)
                   } else {
