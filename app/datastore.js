@@ -21,7 +21,11 @@ var FetchDatasetInfo = function (resource, callback) {
       var resource_data = out.result
       callback(null, resource_data)
     } else {
-      var payload = { 'success': false, 'message': 'Failed to fetch resource information.', 'error': err }
+      var payload = {
+        'success': false,
+        'message': 'Failed to fetch resource information.',
+        'error': err
+      }
       callback(payload)
     }
   })
@@ -78,7 +82,7 @@ var DownloadFile = function (resource_data, verbose, callback) {
   }
   var request = https.get(options, function (response) {
     if (verbose) {
-      console.log('Request headers: ' + JSON.stringify(options))
+      console.log('Download file; request headers: ' + JSON.stringify(options))
     }
 
     //
@@ -119,7 +123,6 @@ var DownloadFile = function (resource_data, verbose, callback) {
 }
 
 var AssignSchema = function (file_path, request_data, resource, callback) {
-  console.log('Assigning schema from request body: ' + JSON.stringify(request_data))
   if (request_data === null) {
     var payload = {
       'success': false,
@@ -161,6 +164,7 @@ var AssignSchema = function (file_path, request_data, resource, callback) {
 // CSV input.
 //
 var InferDataTypes = function (file_path, all_text, resource, callback) {
+  console.log('Inferring header types.')
   //
   // Hack to account for missing parameter.
   //
@@ -174,7 +178,7 @@ var InferDataTypes = function (file_path, all_text, resource, callback) {
       callback({ 'success': false, 'message': 'Data types inference failed.' })
     }
 
-    file.on('close', function () {
+    file.on('end', function () {
       //
       // Forcing all types as text.
       //
@@ -185,11 +189,19 @@ var InferDataTypes = function (file_path, all_text, resource, callback) {
         }
       }
 
+    })
+    file.on('close', function () {
       //
       // Send success and close file.
       //
-      var payload = { 'success': true, 'message': 'Data types inferred successfully.', 'file_name': file_path, 'keys': resource }
-      file.close(callback(null, payload))
+      var payload = {
+        'success': true,
+        'message': 'Data types inferred successfully.',
+        'file_name': file_path,
+        'keys': resource
+      }
+      callback(null, payload)
+      file.close()
     })
   })
 
@@ -208,12 +220,15 @@ var CreateDataStore = function (file_path, resource, callback) {
   var parser = csv.parse({ columns: true }, function (err, data) {
     if (err) {
       callback({ 'success': false, 'message': 'Could not parse CSV file.', 'error': err })
-    }
-    file.on('close', function () {
-      //
-      // Closes file and creates DataStore.
-      //
-      file.close(
+    } else {
+      file.on('end', function () {
+        console.log('Reached end of file.')
+      })
+      file.on('close', function () {
+        //
+        // Closes file.
+        //
+        console.log('Closed file')
         client.action('datastore_create',
           {
             resource_id: resource.id,
@@ -236,15 +251,9 @@ var CreateDataStore = function (file_path, resource, callback) {
               callback(null, { 'success': true, 'message': 'Created the DataStore successfully.', 'URL': payload })
             }
           })
-      )
-
-      //
-      // Delete file from file system.
-      // TODO: no callback sent!
-      //
-      DeleteFile(file_path, false)
-
-    })
+        file.close()
+      })
+    }
   })
 
   //
@@ -256,14 +265,15 @@ var CreateDataStore = function (file_path, resource, callback) {
 //
 // Deletes file from file system.
 //
-var DeleteFile = function (file_path, verbose, callback) {
+var DeleteFile = function (file_path, callback) {
   fs.unlink(file_path, function (err) {
     if (err) {
       callback({ 'success': false, 'message': 'Failed to delete file.', 'error': err })
     } else {
-      if (verbose) {
-        console.log('File ' + file_path + ' deleted successfully.')
-      }
+      callback(null, {
+        'success': true,
+        'message': 'File ' + file_path + ' deleted successfully.'
+      })
     }
   })
 }
