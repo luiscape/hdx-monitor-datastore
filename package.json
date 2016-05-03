@@ -1,6 +1,6 @@
 {
   "name": "hdx-monitor",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Simple Node application to monitor datasets on HDX.",
   "main": "server.js",
   "scripts": {
