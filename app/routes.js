@@ -95,7 +95,7 @@ module.exports = function (app) {
     // Cleaning object from memory.
     //
     resourceInfo.schema.fields = []
-    console.log('Getting hit with schema: ' + JSON.stringify(req.query))
+    console.log('Receiving schema: ' + JSON.stringify(req.query))
 
     //
     // Checks if the DataStore is active.
@@ -104,16 +104,22 @@ module.exports = function (app) {
     // new data.
     //
     Datastore.FetchDatasetInfo(resourceInfo, function (err, data) {
+      console.log('Fetching resource information from HDX.')
       if (err) {
+        console.log('Failed to fetch resource information from HDX.')
         res.send(err)
       } else {
         if (data.datastore_active) {
+          console.log('DataStore found. Attempting deletion.')
           Datastore.DeleteDataStore(data, false, resourceInfo, function (err, data) {
             if (err) {
+              console.log('Failed to delete old DataStore.')
               res.send(err)
             } else {
-              Datastore.DownloadFile(data, false, function (err, data) {
+              console.log('Attempting to download file from HDX.')
+              Datastore.DownloadFile(data, true, function (err, data) {
                 if (err) {
+                  console.log('Failed to download file from HDX.')
                   res.send(err)
                 } else {
                   //
@@ -121,15 +127,18 @@ module.exports = function (app) {
                   // assign that body as a schema.
                   //
                   if (req.query.id !== undefined) {
+                    console.log('Attempting to assign schema.')
                     Datastore.AssignSchema(data.file_name, req.query, resourceInfo, function (err, data) {
                       if (err) {
+                        console.log('Failed to assign schema.')
                         res.send(err)
                       } else {
-                        console.log('Loading data from: ' + data.file_name)
+                        console.log('Reading data from: ' + data.file_name)
                         Datastore.CreateDataStore(data.file_name, resourceInfo, function (err, data) {
                           if (err) {
                             res.send(err)
                           } else {
+                            console.log('Created datastore successfully.')
                             res.send(data)
                           }
                         })
@@ -141,14 +150,19 @@ module.exports = function (app) {
                   // schema based on the CSV file.
                   //
                   } else {
+                    console.log('Attempting to infer data types.')
                     Datastore.InferDataTypes(data.file_name, Config.InferDataTypes, resourceInfo, function (err, data) {
                       if (err) {
+                        console.log('Failed to infer data types.')
                         res.send(err)
                       } else {
+                        console.log('Attempting to create DataStore.')
                         Datastore.CreateDataStore(data.file_name, resourceInfo, function (err, data) {
                           if (err) {
+                            console.log('Failed to create datastore.')
                             res.send(err)
                           } else {
+                            console.log('Datastore created successfully.')
                             res.send(data)
                           }
                         })
@@ -165,8 +179,10 @@ module.exports = function (app) {
           // downloads file, possibly infers data types,
           // and creates DataStore.
           //
-          Datastore.DownloadFile(data, false, function (err, data) {
+          console.log('Attempting to download file from HDX.')
+          Datastore.DownloadFile(data, true, function (err, data) {
             if (err) {
+              console.log('Failed to download file.')
               res.send(err)
             } else {
               //
@@ -174,15 +190,25 @@ module.exports = function (app) {
               // assign that body as a schema.
               //
               if (req.query.id !== undefined) {
+                console.log('Attempting to assign schema.')
                 Datastore.AssignSchema(data.file_name, req.query, resourceInfo, function (err, data) {
                   if (err) {
+                    console.log('Failed to assign schema.')
                     res.send(err)
                   } else {
+                    var file_name = data.file_name
                     console.log('Loading data from: ' + data.file_name)
+                    console.log('Attempting to create DataStore.')
                     Datastore.CreateDataStore(data.file_name, resourceInfo, function (err, data) {
                       if (err) {
+                        console.log('Failed to create DataStore.')
+                        console.log('Attempting to delete file: ' + file_name)
+                        Datastore.DeleteFile(file_name, console.log)
                         res.send(err)
                       } else {
+                        console.log('Created DataStore successfully.')
+                        console.log('Attempting to delete file: ' + file_name)
+                        Datastore.DeleteFile(file_name, console.log)
                         res.send(data)
                       }
                     })
@@ -194,14 +220,24 @@ module.exports = function (app) {
               // schema based on the CSV file.
               //
               } else {
+                console.log('Attempting to infer data types.')
                 Datastore.InferDataTypes(data.file_name, Config.InferDataTypes, resourceInfo, function (err, data) {
                   if (err) {
+                    console.log('Failed to infer data types.')
                     res.send(err)
                   } else {
+                    console.log('Attempting to create DataStore.')
+                    var file_name = data.file_name
                     Datastore.CreateDataStore(data.file_name, resourceInfo, function (err, data) {
                       if (err) {
+                        console.log('Failed to create DataStore.')
+                        console.log('Attempting to delete file: ' + file_name)
+                        Datastore.DeleteFile(file_name, console.log)
                         res.send(err)
                       } else {
+                        console.log('DataStore created successfully.')
+                        console.log('Attempting to delete file: ' + file_name)
+                        Datastore.DeleteFile(file_name, console.log)
                         res.send(data)
                       }
                     })

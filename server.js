@@ -1,3 +1,5 @@
+require('console-stamp')(console, '[HH:MM:ss.l]')
+
 var express = require('express')
 var cors = require('cors')
 var app = express()
