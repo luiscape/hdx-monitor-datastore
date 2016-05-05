@@ -9,16 +9,15 @@ MAINTAINER Luis Capelo <capelo@un.org>
 
 # Clone app and install dependencies.
 RUN \
-  npm install -g pm2 && \
-  git clone https://github.com/luiscape/hdx-monitor-datastore && \
-  cd hdx-monitor-datastore && \
-  npm install
+  npm install -g pm2
+
+ADD . /hdx-monitor-datastore
+
+WORKDIR "/hdx-monitor-datastore"
 
 # Running setup script.
 RUN \
-  cd hdx-monitor-datastore && make setup
-
-WORKDIR "/hdx-monitor-datastore"
+  npm install && make setup
 
 EXPOSE 5000
 

@@ -1,0 +1,16 @@
+node_modules/*
+node_modules/**
+
+coverage/*
+coverage/**
+
+data/*
+data/**
+
+.git/*
+.git/**
+
+config/*
+config/**
+
+.DS_Store
